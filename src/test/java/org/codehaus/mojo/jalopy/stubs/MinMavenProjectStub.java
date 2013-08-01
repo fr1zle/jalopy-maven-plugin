@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Organization;
 import org.codehaus.plexus.PlexusTestCase;
@@ -15,7 +14,7 @@ import org.codehaus.plexus.PlexusTestCase;
  * @author Edwin Punzalan
  */
 public class MinMavenProjectStub extends org.apache.maven.plugin.testing.stubs.MavenProjectStub {
-	public List getCompileClasspathElements() throws DependencyResolutionRequiredException {
+	public List getCompileClasspathElements()  {
 		return Collections.singletonList(PlexusTestCase.getBasedir() + "/target/classes");
 	}
 
