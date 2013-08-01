@@ -13,17 +13,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <project>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>jalopy-maven-plugin</artifactId>
-        <configuration>
-        	<failOnError>false</failOnError>
-        	<project implementation="org.codehaus.mojo.jalopy.stubs.MinMavenProjectStub"/>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>jalopy-maven-plugin</artifactId>
+				<configuration>
+					<failOnError>false</failOnError>
+					<project implementation="org.codehaus.mojo.jalopy.stubs.MinMavenProjectStub" />
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

@@ -1,25 +1,5 @@
 package org.codehaus.mojo.jalopy;
 
-/*
- * Copyright 2001-2005 The Codehaus.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,224 +7,185 @@ import java.io.IOException;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.FileUtils;
+
 /**
- * @description Test case for JalopyMojo.java
- * @author <a href="mailto:jruiz@exist.com">Johnny R. Ruiz III</a>
+ * @author Johnny R. Ruiz III
  * @version $Id$
  */
-public class JalopyMojoTest
-    extends AbstractMojoTestCase
-{
-    JalopyMojo jalopy;
+public class JalopyMojoTest extends AbstractMojoTestCase {
+	JalopyMojo jalopy;
+	String baseDir = System.getProperty("basedir");
 
-    String baseDir = System.getProperty( "basedir" );
+	protected void setUp() throws Exception {
+		super.setUp();
+		File config = new File(getBasedir(), "src/test/plugin-configs/jalopy-plugin-config.xml");
+		jalopy = (JalopyMojo) lookupMojo("format", config);
+		baseDir = PlexusTestCase.getBasedir();
+	}
 
-    protected void setUp()
-        throws Exception
-    {
-    	super.setUp();
-    	File config = new File( getBasedir(), "src/test/plugin-configs/jalopy-plugin-config.xml" );
-        jalopy = (JalopyMojo) lookupMojo("format", config);
-        baseDir = PlexusTestCase.getBasedir();
-    }
+	public void testIfInputFilesIsNotYetJalopyFormatted() throws IOException {
+		recopyInputFiles();
 
-    public void testIfInputFilesIsNotYetJalopyFormatted()
-        throws IOException
-    {
-        recopyInputFiles();
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/input/test/Circle.java"),
+				new File(baseDir, "target/test-classes/input-bak/Circle.java")));
 
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/input/test/Circle.java" ),
-                                      new File( baseDir, "target/test-classes/input-bak/Circle.java" ) ) );
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/input/src/Rectangle.java"),
+				new File(baseDir, "target/test-classes/input-bak/Rectangle.java")));
 
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/input/src/Rectangle.java" ),
-                                      new File( baseDir, "target/test-classes/input-bak/Rectangle.java" ) ) );
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/input/test/Point.java"),
+				new File(baseDir, "target/test-classes/input-bak/Point.java")));
 
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/input/test/Point.java" ),
-                                      new File( baseDir, "target/test-classes/input-bak/Point.java" ) ) );
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/input/src/Point.java"),
+				new File(baseDir, "target/test-classes/input-bak/Point.java")));
+	}
 
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/input/src/Point.java" ),
-                                      new File( baseDir, "target/test-classes/input-bak/Point.java" ) ) );
-    }
+	public void testExecute() {
+		jalopy.setFailOnError(true);
 
-    public void testExecute()
-    {
-        jalopy.setFailOnError( true );
+		jalopy.setFileFormat("auto");
 
-        jalopy.setFileFormat( "auto" );
+		jalopy.setSourceDirectory(new File(baseDir, "src/test/resources/input/src"));
 
-        jalopy.setSourceDirectory( new File( baseDir, "src/test/resources/input/src" ) );
+		jalopy.setSrcExcludesPattern("Point.java");
 
-        jalopy.setSrcExcludesPattern( "Point.java" );
+		jalopy.setSrcIncludesPattern("Rectangle.java");
 
-        jalopy.setSrcIncludesPattern( "Rectangle.java" );
+		jalopy.setTestSourceDirectory(new File(baseDir, "src/test/resources/input/test"));
 
-        jalopy.setTestSourceDirectory( new File( baseDir, "src/test/resources/input/test" ) );
+		jalopy.setTestExcludesPattern("");
 
-        jalopy.setTestExcludesPattern( "" );
+		jalopy.setTestIncludesPattern("*.java");
 
-        jalopy.setTestIncludesPattern( "*.java" );
+		jalopy.setHistory("none");
 
-        jalopy.setHistory( "none" );
+		try {
+			jalopy.execute();
 
-        try
-        {
-            jalopy.execute();
+			assertFalse(compareTextFiles(new File(baseDir, "src/test/resources/input/test/Circle.java"),
+					new File(baseDir, "target/test-classes/input-bak/Circle.java")));
 
-            assertFalse( compareTextFiles( new File( baseDir, "src/test/resources/input/test/Circle.java" ),
-                                           new File( baseDir, "target/test-classes/input-bak/Circle.java" ) ) );
+			assertFalse(compareTextFiles(new File(baseDir, "src/test/resources/input/src/Rectangle.java"),
+					new File(baseDir, "target/test-classes/input-bak/Rectangle.java")));
 
-            assertFalse( compareTextFiles( new File( baseDir, "src/test/resources/input/src/Rectangle.java" ),
-                                           new File( baseDir, "target/test-classes/input-bak/Rectangle.java" ) ) );
+			assertFalse(compareTextFiles(new File(baseDir, "src/test/resources/input/test/Point.java"),
+					new File(baseDir, "target/test-classes/input-bak/Point.java")));
 
-            assertFalse( compareTextFiles( new File( baseDir, "src/test/resources/input/test/Point.java" ),
-                                           new File( baseDir, "target/test-classes/input-bak/Point.java" ) ) );
+			assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/input/src/Point.java"),
+					new File(baseDir, "target/test-classes/input-bak/Point.java")));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-            assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/input/src/Point.java" ),
-                                          new File( baseDir, "target/test-classes/input-bak/Point.java" ) ) );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-    }
+	public void testIfSourceInputFilesWasFormatted() throws IOException {
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/validator/Maven1-Jalopy-Converted-Rectangle.java"),
+				new File(baseDir, "target/test-classes/validator/Maven1-Jalopy-Converted-Rectangle.java")));
+	}
 
-    public void testIfSourceInputFilesWasFormatted()
-        throws IOException
-    {
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/validator/Maven1-Jalopy-Converted-Rectangle.java" ),
-                                      new File( baseDir,
-                                                "target/test-classes/validator/Maven1-Jalopy-Converted-Rectangle.java" ) ) );
-    }
+	public void testIfExcludedFilesNotFormatted() throws IOException {
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/input/src/Point.java"),
+				new File(baseDir, "target/test-classes/input-bak/Point.java")));
+	}
 
-    public void testIfExcludedFilesNotFormatted()
-        throws IOException
-    {
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/input/src/Point.java" ),
-                                      new File( baseDir, "target/test-classes/input-bak/Point.java" ) ) );
-    }
+	public void testIfTestInputFilesAllFormatted() throws IOException {
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/validator/Maven1-Jalopy-Converted-Circle.java"),
+				new File(baseDir, "target/test-classes/validator/Maven1-Jalopy-Converted-Circle.java")));
 
-    public void testIfTestInputFilesAllFormatted()
-        throws IOException
-    {
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/validator/Maven1-Jalopy-Converted-Circle.java" ),
-                                      new File( baseDir,
-                                                "target/test-classes/validator/Maven1-Jalopy-Converted-Circle.java" ) ) );
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/validator/Maven1-Jalopy-Converted-Point.java"),
+				new File(baseDir, "target/test-classes/validator/Maven1-Jalopy-Converted-Point.java")));
 
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/validator/Maven1-Jalopy-Converted-Point.java" ),
-                                      new File( baseDir,
-                                                "target/test-classes/validator/Maven1-Jalopy-Converted-Point.java" ) ) );
+		assertTrue(compareTextFiles(new File(baseDir, "src/test/resources/validator/Maven1-Jalopy-Converted-Rectangle.java"),
+				new File(baseDir, "target/test-classes/validator/Maven1-Jalopy-Converted-Rectangle.java")));
 
-        assertTrue( compareTextFiles( new File( baseDir, "src/test/resources/validator/Maven1-Jalopy-Converted-Rectangle.java" ),
-                                      new File( baseDir,
-                                                "target/test-classes/validator/Maven1-Jalopy-Converted-Rectangle.java" ) ) );
+		deleteInputFiles();
+	}
 
-        deleteInputFiles();
+	public void testSetGetFileFormat() {
+		jalopy.setFileFormat("fileFormat");
 
-    }
+		assertEquals("fileFormat", jalopy.getFileFormat());
+	}
 
-    public void testSetGetFileFormat()
-    {
-        jalopy.setFileFormat( "fileFormat" );
+	public void testSetIsFailOnError() {
+		jalopy.setFailOnError(true);
 
-        assertEquals( "fileFormat", jalopy.getFileFormat() );
-    }
+		assertEquals(true, jalopy.isFailOnError());
+	}
 
-    public void testSetIsFailOnError()
-    {
-        jalopy.setFailOnError( true );
+	public void testSetGetSourceDirectory() {
+		jalopy.setSourceDirectory(new File("src/test"));
 
-        assertEquals( true, jalopy.isFailOnError() );
-    }
+		assertEquals(new File("src/test"), jalopy.getSourceDirectory());
+	}
 
-    public void testSetGetSourceDirectory()
-    {
-        jalopy.setSourceDirectory( new File( "src/test" ) );
+	public void testSetGetSrcIncludesPattern() {
+		jalopy.setSrcIncludesPattern("**.*");
 
-        assertEquals( new File( "src/test" ), jalopy.getSourceDirectory() );
-    }
+		assertEquals("**.*", jalopy.getSrcIncludesPattern());
+	}
 
-    public void testSetGetSrcIncludesPattern()
-    {
-        jalopy.setSrcIncludesPattern( "**.*" );
+	public void testSetGetSrcExcludesPattern() {
+		jalopy.setSrcExcludesPattern("**.pro");
 
-        assertEquals( "**.*", jalopy.getSrcIncludesPattern() );
-    }
+		assertEquals("**.pro", jalopy.getSrcExcludesPattern());
+	}
 
-    public void testSetGetSrcExcludesPattern()
-    {
-        jalopy.setSrcExcludesPattern( "**.pro" );
+	public void testSetGetHistory() {
+		jalopy.setHistory("history");
 
-        assertEquals( "**.pro", jalopy.getSrcExcludesPattern() );
-    }
+		assertEquals("history", jalopy.getHistory());
+	}
 
-    public void testSetGetHistory()
-    {
-        jalopy.setHistory( "history" );
+	private boolean compareTextFiles(File f1, File f2) throws FileNotFoundException, IOException {
+		String text1 = getTextContents(f1);
 
-        assertEquals( "history", jalopy.getHistory() );
-    }
+		String text2 = getTextContents(f2);
 
-    private boolean compareTextFiles( File f1, File f2 )
-        throws FileNotFoundException, IOException
-    {
-        String text1 = getTextContents( f1 );
+		StringTokenizer tokenizer1 = new StringTokenizer(text1, "\n");
 
-        String text2 = getTextContents( f2 );
+		StringTokenizer tokenizer2 = new StringTokenizer(text2, "\n");
 
-        StringTokenizer tokenizer1 = new StringTokenizer( text1, "\n" );
+		if (tokenizer1.countTokens() != tokenizer2.countTokens()) {
+			return false;
+		}
 
-        StringTokenizer tokenizer2 = new StringTokenizer( text2, "\n" );
+		while (tokenizer1.hasMoreTokens()) {
+			if (!tokenizer1.nextToken().equalsIgnoreCase(tokenizer2.nextToken())) {
+				return false;
+			}
+		}
 
-        if ( tokenizer1.countTokens() != tokenizer2.countTokens() )
-        {
-            return false;
-        }
+		return true;
+	}
 
-        while ( tokenizer1.hasMoreTokens() )
-        {
-            if ( !tokenizer1.nextToken().equalsIgnoreCase( tokenizer2.nextToken() ) )
-            {
-                return false;
-            }
-        }
+	private String getTextContents(File f) throws FileNotFoundException, IOException {
+		FileInputStream fIn = new FileInputStream(f);
 
-        return true;
-    }
+		byte[] fBytes = new byte[fIn.available()];
 
-    private String getTextContents( File f )
-        throws FileNotFoundException, IOException
-    {
-        FileInputStream fIn = new FileInputStream( f );
+		fIn.read(fBytes);
 
-        byte[] fBytes = new byte[fIn.available()];
+		fIn.close();
 
-        fIn.read( fBytes );
+		return new String(fBytes);
+	}
 
-        fIn.close();
+	private void recopyInputFiles() throws IOException {
+		FileUtils.copyDirectory(new File(baseDir, "src/test/resources/input-bak/"), new File(baseDir, "src/test/resources/input/src"));
 
-        return new String( fBytes );
-    }
+		FileUtils.copyDirectory(new File(baseDir, "src/test/resources/input-bak/"), new File(baseDir, "src/test/resources/input/test"));
 
-    private void recopyInputFiles()
-        throws IOException
-    {
-        FileUtils.copyDirectory( new File( baseDir, "src/test/resources/input-bak/" ),
-                                 new File( baseDir, "src/test/resources/input/src" ) );
+		List fileList = FileUtils.getFiles(new File(baseDir, "src/test/resources/input-bak/"), "*.java", "");
 
-        FileUtils.copyDirectory( new File( baseDir, "src/test/resources/input-bak/" ),
-                                 new File( baseDir, "src/test/resources/input/test" ) );
+		for (int ctr = 0; ctr < fileList.size(); ctr++) {
+			break;
+		}
+	}
 
-        List fileList = FileUtils.getFiles( new File( baseDir, "src/test/resources/input-bak/" ), "*.java", "" );
-
-        for ( int ctr = 0; ctr < fileList.size(); ctr++ )
-        {
-            break;
-        }
-    }
-
-    private void deleteInputFiles()
-        throws IOException
-    {
-        FileUtils.deleteDirectory( baseDir + "/src/test/resources/input" );
-    }
+	private void deleteInputFiles() throws IOException {
+		FileUtils.deleteDirectory(baseDir + "/src/test/resources/input");
+	}
 }

@@ -1,87 +1,152 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>mojo</artifactId>
-    <groupId>org.codehaus.mojo</groupId>
-    <version>16</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.spout</groupId>
-  <artifactId>jalopy-maven-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Jalopy Maven Plugin</name>
-  <version>1.1-SNAPSHOT</version>
-  <description>Formats java source files following a coding convention.</description>
-  <prerequisites>
-    <maven>2.0</maven>
-  </prerequisites>
-  <inceptionYear>2004</inceptionYear>
-  <developers>
-    <developer>
-      <id>jruiz</id>
-      <name>Johnny R. Ruiz III</name>
-      <email>jruiz@exist.com</email>
-    </developer>
-    
-    <developer>
-      <id>aaime</id>
-      <name>Andrea Aime</name>
-      <email>a.aime@aliceposta.it</email>
-    </developer>
-  </developers>
+	<modelVersion>4.0.0</modelVersion>
 
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  
-  <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/jalopy-maven-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/jalopy-maven-plugin/</developerConnection>
-    <url>http://svn.codehaus.org/mojo/trunk/mojo/jalopy-maven-plugin/</url>
-  </scm>
+	<!-- Project information -->
+	<name>Jalopy Maven Plugin</name>
+	<groupId>org.spout</groupId>
+	<artifactId>jalopy-maven-plugin</artifactId>
+	<version>1.1.0-SNAPSHOT</version>
+	<packaging>maven-plugin</packaging>
+	<inceptionYear>2006</inceptionYear>
+	<description>Formats Java source files following a coding convention.</description>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>2.0</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>2.0</version>
-    </dependency>
+	<!-- Parent information -->
+	<parent>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>mojo</artifactId>
+		<version>17</version>
+	</parent>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
+	<!-- Build prerequisites -->
+	<prerequisites>
+		<maven>2.0</maven>
+	</prerequisites>
 
-    <dependency>
-      <groupId>jalopy</groupId>
-      <artifactId>jalopy</artifactId>
-      <version>1.5rc3</version>
-    </dependency>
+	<!-- Build properties -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.1</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.0-beta-1</version>
-      <scope>test</scope>
-    </dependency>
+	<!-- Project developers -->
+	<developers>
+		<developer>
+			<id>aaime</id>
+			<name>Andrea Aime</name>
+			<email>a.aime@aliceposta.it</email>
+		</developer>
+		<developer>
+			<id>jruiz</id>
+			<name>Johnny R. Ruiz III</name>
+			<email>jruiz@exist.com</email>
+		</developer>
+		<developer>
+			<id>Wulfspider</id>
+			<name>Luke Spragg</name>
+			<email>the@wulf.im</email>
+		</developer>
+	</developers>
 
-  </dependencies>
+	<!-- License information -->
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
+	<!-- Source code access -->
+	<scm>
+		<connection>scm:git:git://github.com/SpoutDev/jalopy-maven-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:SpoutDev/jalopy-maven-plugin.git</developerConnection>
+		<url>https://github.com/SpoutDev/jalopy-maven-plugin</url>
+	</scm>
+
+	<!-- Continuous integration -->
+	<ciManagement>
+		<system>travis</system>
+		<url>https://travis-ci.org/SpoutDev/jalopy-maven-plugin</url>
+	</ciManagement>
+
+	<!-- Issue management -->
+	<issueManagement>
+		<system>jira</system>
+		<url>http://issues.spout.org/browse/JALOPY</url>
+	</issueManagement>
+
+	<!-- Dependency repositories -->
+	<repositories>
+		<repository>
+			<id>spout-repo</id>
+			<url>http://nexus.spout.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<!-- Project dependencies -->
+	<dependencies>
+		<!-- Provided by third-party -->
+		<dependency>
+			<groupId>jalopy</groupId>
+			<artifactId>jalopy</artifactId>
+			<version>1.5rc3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>2.0.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+			<version>2.0.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>3.0.10</version>
+		</dependency>
+		<!-- Testing only -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugin-testing</groupId>
+			<artifactId>maven-plugin-testing-harness</artifactId>
+			<version>2.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<!-- Build configuration -->
+	<build>
+		<defaultGoal>clean install</defaultGoal>
+
+		<!-- Resources to include -->
+		<resources>
+			<!-- Static resources -->
+			<resource>
+				<filtering>false</filtering>
+				<directory>.</directory>
+				<targetPath>.</targetPath>
+				<includes>
+					<include>LICENSE.txt</include>
+				</includes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<targetPath>.</targetPath>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
 </project>
